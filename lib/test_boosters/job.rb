@@ -33,7 +33,12 @@ module TestBoosters
         return 0
       end
 
-      TestBoosters::Shell.execute("#{@command} #{files.join(" ")}")
+      # TODO: do this properly, hack this in for now to get it working
+      if @command =~ /cucumber/
+        TestBoosters::Shell.execute("#{@command} #{files.join(" ")} || bundle exec cucumber --strict @rerun.txt")
+      else
+        TestBoosters::Shell.execute("#{@command} #{files.join(" ")}")
+      end
     end
 
   end
