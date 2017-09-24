@@ -35,7 +35,7 @@ module TestBoosters
 
       # TODO: do this properly, hack this in for now to get it working
       if @command =~ /cucumber/
-        cmd = "[ ${CUKES_OFF:-0} -eq 1 ] || ( bundle exec cucumber --strict -f rerun --out rerun.txt #{files.join(" ")} || bundle exec cucumber --strict @rerun.txt; fi" )
+        cmd = "if [ -x ./script/semaphore/cukes_off.rb ] && ./script/semaphore/cukes_off.rb; then echo 'CUKES OFF'; else bundle exec cucumber --strict -f rerun --out rerun.txt #{files.join(" ")} || bundle exec cucumber --strict @rerun.txt; fi"
         TestBoosters::Shell.execute(cmd)
       else
         TestBoosters::Shell.execute("#{@command} #{files.join(" ")}")
