@@ -2,10 +2,11 @@ module TestBoosters
   module Boosters
     class Base
 
-      def initialize(file_pattern, split_configuration_path, command)
+      def initialize(file_pattern, split_configuration_path, command, exclude_path)
         @command = command
         @file_pattern = file_pattern
         @split_configuration_path = split_configuration_path
+        @exclude_path = exclude_path
       end
 
       # :reek:TooManyStatements
@@ -43,7 +44,8 @@ module TestBoosters
       def distribution
         @distribution ||= TestBoosters::Files::Distributor.new(@split_configuration_path,
                                                                @file_pattern,
-                                                               job_count)
+                                                               job_count,
+                                                               @exclude_path)
       end
 
       def job_index

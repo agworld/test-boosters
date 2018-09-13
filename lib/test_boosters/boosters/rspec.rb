@@ -3,9 +3,10 @@ module TestBoosters
     class Rspec < Base
 
       FILE_PATTERN = "spec/**/*_spec.rb".freeze
+      EXCLUDE_PATH = ENV['BOOSTERS_EXCLUDE_PATH'].freeze
 
       def initialize
-        super(FILE_PATTERN, split_configuration_path, command)
+        super(FILE_PATTERN, split_configuration_path, command, EXCLUDE_PATH)
       end
 
       def display_header
