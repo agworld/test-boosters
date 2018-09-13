@@ -12,3 +12,5 @@
 /coverage
 config/cucumber.yml
 /features
+.byebug*
+.*.swo
