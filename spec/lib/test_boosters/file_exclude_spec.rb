@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'byebug'
 
 describe 'Excluding a path from running when' do
   subject { distributor.all_files.any? { |f| f.include? banished_dir } }

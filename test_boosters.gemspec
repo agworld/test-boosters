@@ -25,7 +25,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", "~> 3.5"
   spec.add_development_dependency "activesupport", "~> 4.0"
 
-  spec.add_development_dependency "byebug"
   spec.add_development_dependency "rubocop", "~> 0.49.0"
   spec.add_development_dependency "rubocop-rspec", "~> 1.13.0"
   spec.add_development_dependency "reek", "4.5.6"
