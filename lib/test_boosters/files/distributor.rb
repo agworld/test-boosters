@@ -6,11 +6,11 @@ module TestBoosters
     #
     class Distributor
 
-      def initialize(split_configuration_path, file_pattern, job_count, exclude_path)
+      def initialize(split_configuration_path, file_pattern, job_count)
         @split_configuration_path = split_configuration_path
         @file_pattern = file_pattern
         @job_count = job_count
-        @exclude_path = exclude_path
+        @exclude_path = ENV['BOOSTERS_EXCLUDE_PATH'].freeze
       end
 
       def display_info

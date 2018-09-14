@@ -4,10 +4,9 @@ require 'byebug'
 describe 'Excluding a path from running when' do
   subject { distributor.all_files.any? { |f| f.include? banished_dir } }
 
-  let(:exclude_path) { ENV['BOOSTERS_EXCLUDE_PATH'] }
   let(:banished_dir) { '/integration/' }
-  let(:file_pattern) { 'spec/**/*_spec.rb' } # This value is hardcoded in the Rspec boosters
-  let(:distributor) { TestBoosters::Files::Distributor.new(nil, file_pattern, 12, exclude_path) }
+  let(:file_pattern) { 'spec/**/*_spec.rb' } # The hardcoded pattern for rspec boosters
+  let(:distributor) { TestBoosters::Files::Distributor.new(nil, file_pattern, 12) }
 
   after { ENV.delete('BOOSTERS_EXCLUDE_PATH') }
 
@@ -19,7 +18,7 @@ describe 'Excluding a path from running when' do
     end
   end
 
-  context 'an specific file is passed' do
+  context 'a specific file is passed' do
     before { ENV['BOOSTERS_EXCLUDE_PATH'] = 'cucumber_spec.rb' }
 
     it 'files filtered out correctly' do
