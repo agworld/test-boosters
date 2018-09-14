@@ -10,6 +10,7 @@ module TestBoosters
         @split_configuration_path = split_configuration_path
         @file_pattern = file_pattern
         @job_count = job_count
+        @exclude_path = ENV['BOOSTERS_EXCLUDE_PATH'].freeze
       end
 
       def display_info
@@ -26,7 +27,8 @@ module TestBoosters
       end
 
       def all_files
-        @all_files ||= Dir[@file_pattern].sort
+        return Dir[@file_pattern].sort if @exclude_path.nil? || @exclude_path.empty?
+        Dir[@file_pattern].sort.reject { |path| path.include?(@exclude_path) }
       end
 
       private
