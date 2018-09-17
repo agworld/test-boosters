@@ -3,48 +3,50 @@ require 'spec_helper'
 describe 'Excluding a path from running when' do
   subject { distributor.all_files.any? { |f| f.include? banished_dir } }
 
-  let(:banished_dir) { '/integration/' }
+  let(:banished_dir) { '/features/' }
   let(:file_pattern) { 'spec/**/*_spec.rb' } # The hardcoded pattern for rspec boosters
   let(:distributor) { TestBoosters::Files::Distributor.new(nil, file_pattern, 12) }
 
-  after { ENV.delete('BOOSTERS_EXCLUDE_PATH') }
+  after do
+    ENV.delete('SEMAPHORE_TRIGGER_SOURCE')
+    ENV.delete('BRANCH_NAME')
+  end
 
-  context 'an exclusion path is specified' do
-    before { ENV['BOOSTERS_EXCLUDE_PATH'] = 'spec/integration/' }
+  context 'on a core branch' do
+    before { ENV['BRANCH_NAME'] = 'master' }
+
+    it 'files filtered out correctly' do
+      expect(subject).to be true
+    end
+  end
+
+  context 'on an arbitrary branch' do
+    before { ENV['BRANCH_NAME'] = 'abracadabra' }
 
     it 'files filtered out correctly' do
       expect(subject).to be false
     end
   end
 
-  context 'a specific file is passed' do
-    before { ENV['BOOSTERS_EXCLUDE_PATH'] = 'cucumber_spec.rb' }
+  context 'when manually rebuilt' do
+    before { ENV['SEMAPHORE_TRIGGER_SOURCE'] = 'manual' }
 
-    it 'files filtered out correctly' do
-      expect(subject).to be true
-      expect(distributor.all_files).not_to include('spec/integration/cucumber_spec.rb')
-    end
-  end
-
-  context 'no exclusion path is specified' do
-    it 'nothing filtered out' do
+    it 'files filtered correctly' do
       expect(subject).to be true
     end
   end
 
-  context 'an empty exlusion path is passed' do
-    before { ENV['BOOSTERS_EXCLUDE_PATH'] = '' }
+  context 'an automated push' do
+    before { ENV['SEMAPHORE_TRIGGER_SOURCE'] = 'push' }
 
-    it 'nothing filtered out' do
-      expect(subject).to be true
+    it 'files filtered correctly' do
+      expect(subject).to be false
     end
   end
 
-  context 'a nil path is passed' do
-    before { ENV['BOOSTERS_EXCLUDE_PATH'] = nil }
-
-    it 'nothing filtered out' do
-      expect(subject).to be true
+  context 'nothing is specified' do
+    it 'features filtered out' do
+      expect(subject).to be false
     end
   end
 end
