@@ -15,16 +15,14 @@ module TestBoosters
 
       def env_handler
         last_msg = `git log -1`
-        start = last_msg =~ /\[/
-        ending = last_msg =~ /\]/
-        command = last_msg[start.to_i..ending.to_i]
 
-        case command
-        when '[cukes off]'
+        if last_msg.include?('[cukes off]')
           @exclude_path << '.feature'
-        when '[regression]'
+        end
+        if last_msg.include?('[regression]')
           @exclude_path.delete(ENV['BOOSTERS_EXCLUDE_PATH'])
-        when '[spec off]'
+        end
+        if last_msg.include?('[spec off]')
           @exclude_path << '_spec.rb'
         end
       end
