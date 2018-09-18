@@ -113,7 +113,7 @@ There are two environment variables that need to be set in order to do this:
 
 `REGRESSION_PATH` is the path that the test boosters will ignore unless a full test suite is being run.
 
-`EXEMPT_BRANCHES` contains a csv list of branches that will always run a full test suite- i.e. they will ignore the REGRESSION_PATH exclusion. This is very useful for branches like master, release or develop where thoroughness is more important than execution time.
+`EXEMPT_BRANCHES` contains a csv list of branches that will always run a full test suite - i.e. they will ignore the REGRESSION_PATH exclusion. This is very useful for branches like master, release or develop where thoroughness is more important than execution time.
 
 An example use of this would be a company that doesn't want their Capybara tests (all located in spec/features/) to run unless necessary. This way, Semaphore's build time can be reduced on all branches that don't need total build-accuracy. In this case, the company could use Semaphore's environment variable setter to enable:
 
@@ -121,7 +121,7 @@ An example use of this would be a company that doesn't want their Capybara tests
 
 `EXEMPT_BRANCHES=master,release,develop`
 
-Additionally, the REGRESSION_PATH will be ignored if the build was manually created- meaning it was created by someone clicking 'Rebuild last revision' on Semaphore.
+Additionally, the REGRESSION_PATH will be ignored if the build was manually created - meaning it was created by someone clicking 'Rebuild last revision' on Semaphore.
 
 ### Commit Directives
 
@@ -130,20 +130,20 @@ Further, test execution can be customised by commit directives. Commit directive
 - [ci skip]
   - Semaphore will not process this commit, will not create a build revision of it.
 - [cukes off]
-  - Cucumber tests wont run. This directive tells Semaphore not to execute any cucumber test files.
+  - Cucumber tests will not be run. This directive tells Semaphore not to execute any cucumber test files.
 - [specs off]
-  - Specs wont run. Same purpose as cukes off but for specs.
+  - Specs will not be run. Same purpose as cukes off but for specs.
 - [minitest off]
-  - Minitest wont run.
+  - Minitest tests will not be run.
 - [exunit off]
-  - ExUnit tests wont run.
+  - ExUnit tests will not be run.
 - [gotest off]
-  - GoTests wont run.
+  - GoTests tests will not be run.
 - [regression]
   - The REGRESSION_PATH is ignored, a full test-suite is run for this build. Useful if you want to be certain your code is green before pushing to release, master etc.
 
 These commit directives can be stacked as much as you would like, but be wary of using conflicting directives that might have unexpected behaviour.
-For example if `[regression]` and `[ci skip]` are both passed, ci skip will trump and no build revision will be made.
+For example if `[regression]` and `[ci skip]` are both passed, `[ci skip]` will trump and no build revision will be made.
 
 In an example where a developer did not want their specs to run on a certain commit, they could use the commit message:
 
