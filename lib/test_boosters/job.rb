@@ -35,6 +35,5 @@ module TestBoosters
 
       TestBoosters::Shell.execute("#{@command} #{files.join(" ")}")
     end
-
   end
 end
