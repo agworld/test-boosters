@@ -60,11 +60,9 @@ module TestBoosters
       end
 
       def all_files
-        is_valid = lambda { |x| x.nil? || x.empty? }
-
-        return Dir[@file_pattern].sort if @exclude_path.all? { |path| is_valid[path] }
+        return Dir[@file_pattern].sort if @exclude_path.all? { |path| path.nil? || path.empty? }
         Dir[@file_pattern].sort.reject do |path|
-          @exclude_path.any? { |word| path.include?(word) unless is_valid[word] }
+          @exclude_path.any? { |word| path.include?(word) unless word.nil? || word.empty? }
         end
       end
 
