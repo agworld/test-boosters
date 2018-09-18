@@ -12,6 +12,8 @@ Test Booster basics:
   - [What are Test Boosters](#what-are-test-boosters)
   - [Split Configuration](#split-configuration)
   - [Leftover Files](#split-configuration)
+  - [Altering Test Paths](#altering-test-paths)
+  - [Commit Directives](#commit-directives)
 
 Test Boosters:
 
@@ -102,6 +104,57 @@ rspec_booster --job 1/3
 ```
 
 Booster will distribute your leftover files uniformly across jobs.
+
+### Altering Test Paths
+
+There is always a trade-off between testing time and test thoroughness.
+To make this more flexible, test boosters have the ability to dynamically assign test paths based on environment variables.
+There are two environment variables that need to be set in order to do this:
+
+`REGRESSION_PATH` is the path that the test boosters will ignore unless a full test suite is being run.
+
+`EXEMPT_BRANCHES` contains a csv list of branches that will always run a full test suite- i.e. they will ignore the REGRESSION_PATH exclusion. This is very useful for branches like master, release or develop where thoroughness is more important than execution time.
+
+An example use of this would be a company that doesn't want their Capybara tests (all located in spec/features/) to run unless necessary. This way, Semaphore's build time can be reduced on all branches that don't need total build-accuracy. In this case, the company could use Semaphore's environment variable setter to enable:
+
+`REGRESSION_PATH=spec/features/`
+
+`EXEMPT_BRANCHES=master,release,develop`
+
+Additionally, the REGRESSION_PATH will be ignored if the build was manually created- meaning it was created by someone clicking 'Rebuild last revision' on Semaphore.
+
+### Commit Directives
+
+Further, test execution can be customised by commit directives. Commit directives are strings pulled from the most recent git commit. There are seven recognised commit directives:
+
+- [ci skip]
+  - Semaphore will not process this commit, will not create a build revision of it.
+- [cukes off]
+  - Cucumber tests wont run. This directive tells Semaphore not to execute any cucumber test files.
+- [specs off]
+  - Specs wont run. Same purpose as cukes off but for specs.
+- [minitest off]
+  - Minitest wont run.
+- [exunit off]
+  - ExUnit tests wont run.
+- [gotest off]
+  - GoTests wont run.
+- [regression]
+  - The REGRESSION_PATH is ignored, a full test-suite is run for this build. Useful if you want to be certain your code is green before pushing to release, master etc.
+
+These commit directives can be stacked as much as you would like, but be wary of using conflicting directives that might have unexpected behaviour.
+For example if `[regression]` and `[ci skip]` are both passed, ci skip will trump and no build revision will be made.
+
+In an example where a developer did not want their specs to run on a certain commit, they could use the commit message:
+
+``` git
+Misc changes to cucumber tests.
+
+Altered the setup file for our cucumber tests, shouldn't affect any of the specs.
+[specs off]
+```
+
+Note that it does not matter where the `[command]` is in the commit message.
 
 ## RSpec Booster
 
