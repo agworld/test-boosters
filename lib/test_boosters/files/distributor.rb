@@ -10,13 +10,34 @@ module TestBoosters
         @split_configuration_path = split_configuration_path
         @file_pattern = file_pattern
         @job_count = job_count
-        @exclude_path = ENV['BOOSTERS_EXCLUDE_PATH'].freeze
+        @exclude_path = ['spec/features/']
+      end
+
+      def env_handler
+        last_msg = `git log -1`
+
+        if %w[master develop release].include?(ENV['BRANCH_NAME'])
+          @exclude_path.delete('spec/features/')
+        end
+        if ENV['SEMAPHORE_TRIGGER_SOURCE'].eql?('manual')
+          @exclude_path.delete('spec/features/')
+        end
+        if last_msg.include?('[cukes off]')
+          @exclude_path << '.feature'
+        end
+        if last_msg.include?('[regression]')
+          @exclude_path.delete('spec/features/')
+        end
+        if last_msg.include?('[spec off]')
+          @exclude_path << '_spec.rb'
+        end
       end
 
       def display_info
         puts "Split configuration present: #{split_configuration.present? ? "yes" : "no"}"
         puts "Split configuration valid: #{split_configuration.valid? ? "yes" : "no"}"
         puts "Split configuration file count: #{split_configuration.all_files.size}"
+        puts "Paths filtered out: #{@exclude_path}"
       end
 
       def files_for(job_index)
@@ -27,8 +48,12 @@ module TestBoosters
       end
 
       def all_files
-        return Dir[@file_pattern].sort if @exclude_path.nil? || @exclude_path.empty?
-        Dir[@file_pattern].sort.reject { |path| path.include?(@exclude_path) }
+        env_handler
+
+        return Dir[@file_pattern].sort if @exclude_path.all? { |path| path.nil? || path.empty? }
+        Dir[@file_pattern].sort.reject do |path|
+          @exclude_path.any? { |word| path.include? word unless word.nil? || word.empty? }
+        end
       end
 
       private
