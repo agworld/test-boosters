@@ -31,7 +31,6 @@ module TestBoosters
         if source.eql?('manual')
           @exclude_path.delete(regression_path)
         end
-
         if last_msg.include?('[regression]')
           @exclude_path.delete(regression_path)
         end
@@ -40,6 +39,15 @@ module TestBoosters
         end
         if last_msg.include?('[specs off]')
           @exclude_path << '_spec.rb'
+        end
+        if last_msg.include?('[minitest off]')
+          @exclude_path << '_test.rb'
+        end
+        if last_msg.include?('[exunit off]')
+          @exclude_path << '_test.exs'
+        end
+        if last_msg.include?('[gotest off]')
+          @exclude_path << '_test.go'
         end
 
         @exclude_path
