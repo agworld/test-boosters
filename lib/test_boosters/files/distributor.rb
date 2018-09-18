@@ -38,9 +38,11 @@ module TestBoosters
         if last_msg.include?('[cukes off]')
           @exclude_path << '.feature'
         end
-        if last_msg.include?('[spec off]')
+        if last_msg.include?('[specs off]')
           @exclude_path << '_spec.rb'
         end
+
+        @exclude_path
       end
 
       def display_info
