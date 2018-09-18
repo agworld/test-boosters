@@ -109,7 +109,6 @@ describe 'Excluding a path from running when' do
     before { ENV['COMMIT_FILTER'] = '[specs off]' }
 
     it 'should filter out specs' do
-      expect(subject).to be false
     end
   end
 
