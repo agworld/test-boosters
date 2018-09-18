@@ -10,25 +10,33 @@ module TestBoosters
         @split_configuration_path = split_configuration_path
         @file_pattern = file_pattern
         @job_count = job_count
-        @exclude_path = ['spec/features/']
+        @exclude_path = []
 
         env_handler
       end
 
       def env_handler
         last_msg = `git log -1`
-
-        if %w[master develop release].include?(ENV['BRANCH_NAME'])
-          @exclude_path.delete('spec/features/')
+        regression_path = ENV['REGRESSION_PATH']
+        source = ENV['SEMAPHORE_TRIGGER_SOURCE']
+        current_branch = ENV['BRANCH_NAME']
+        exempt_branches =
+         if ENV['EXEMPT_BRANCHES'].nil?
+           []
+         else
+           ENV['EXEMPT_BRANCHES'].split(',')
         end
-        if ENV['SEMAPHORE_TRIGGER_SOURCE'].eql?('manual')
-          @exclude_path.delete('spec/features/')
+
+        @exclude_path << regression_path unless exempt_branches.include?(current_branch)
+        if source.eql?('manual')
+          @exclude_path.delete(regression_path)
+        end
+
+        if last_msg.include?('[regression]')
+          @exclude_path.delete(regression_path)
         end
         if last_msg.include?('[cukes off]')
           @exclude_path << '.feature'
-        end
-        if last_msg.include?('[regression]')
-          @exclude_path.delete('spec/features/')
         end
         if last_msg.include?('[spec off]')
           @exclude_path << '_spec.rb'
