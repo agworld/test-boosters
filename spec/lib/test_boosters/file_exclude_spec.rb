@@ -35,7 +35,6 @@ describe 'Excluding a path from running when' do
     before { ENV['BRANCH_NAME'] = 'abracadabra' }
 
     it 'with regression path' do
-      puts `git log -1`
       expect(subject).to be false
     end
 
@@ -109,6 +108,7 @@ describe 'Excluding a path from running when' do
     before { ENV['COMMIT_FILTER'] = '[specs off]' }
 
     it 'should filter out specs' do
+      expect(subject).to be false
     end
   end
 
