@@ -11,6 +11,8 @@ module TestBoosters
         @file_pattern = file_pattern
         @job_count = job_count
         @exclude_path = ['spec/features/']
+
+        env_handler
       end
 
       def env_handler
@@ -48,11 +50,11 @@ module TestBoosters
       end
 
       def all_files
-        env_handler
+        is_valid = lambda { |x| x.nil? || x.empty? }
 
-        return Dir[@file_pattern].sort if @exclude_path.all? { |path| path.nil? || path.empty? }
+        return Dir[@file_pattern].sort if @exclude_path.all? { |path| is_valid[path] }
         Dir[@file_pattern].sort.reject do |path|
-          @exclude_path.any? { |word| path.include? word unless word.nil? || word.empty? }
+          @exclude_path.any? { |word| path.include?(word) unless is_valid[word] }
         end
       end
 
