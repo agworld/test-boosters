@@ -33,7 +33,13 @@ module TestBoosters
         return 0
       end
 
-      TestBoosters::Shell.execute("#{@command} #{files.join(" ")}")
+      if @command.include?('cucumber')
+        puts 'Re-runs NOT enabled'
+        TestBoosters::Shell.execute("#{@command} --strict -f rerun --out rerun.txt #{files.join(' ')} || #{@command} --strict @rerun.txt")
+      else
+        puts 'Re-runs ENABLED'
+        TestBoosters::Shell.execute("#{@command} #{files.join(" ")}")
+      end
     end
   end
 end
