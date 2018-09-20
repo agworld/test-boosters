@@ -33,7 +33,12 @@ module TestBoosters
         return 0
       end
 
-      TestBoosters::Shell.execute("#{@command} #{files.join(" ")}")
+      if @command.include?(' cucumber ')
+        TestBoosters::Shell.execute("#{@command} --strict -f rerun --out rerun.txt #{files.join(' ')} ||
+                                     #{@command} --strict @rerun.txt")
+      else
+        TestBoosters::Shell.execute("#{@command} #{files.join(" ")}")
+      end
     end
   end
 end
