@@ -115,6 +115,21 @@ describe TestBoosters::Files::SplitConfiguration do
         expect(configuration.jobs[2].files).to eq []
       end
     end
-  end
 
+    context "filter path is present" do
+      before { @exclude_path = ['c_', '', nil, 'abd'] }
+
+      subject(:configuration) { described_class.new(@path, @exclude_path) }
+
+      it { is_expected.to be_present }
+
+      describe "filtering" do
+        it "puts every file to its proper job instance" do
+          expect(configuration.jobs[0].files).to eq ["a_spec.rb", "d_spec.rb"]
+          expect(configuration.jobs[1].files).to eq ["b_spec.rb", "f_spec.rb"]
+          expect(configuration.jobs[2].files).to eq []
+        end
+      end
+    end
+  end
 end

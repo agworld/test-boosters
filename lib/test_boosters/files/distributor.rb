@@ -81,7 +81,7 @@ module TestBoosters
       end
 
       def split_configuration
-        @split_configuration ||= TestBoosters::Files::SplitConfiguration.new(@split_configuration_path)
+        @split_configuration ||= TestBoosters::Files::SplitConfiguration.new(@split_configuration_path, @exclude_path)
       end
 
     end

@@ -4,9 +4,10 @@ module TestBoosters
 
       Job = Struct.new(:files)
 
-      def initialize(path)
+      def initialize(path, exclude_path=[])
         @path = path
         @valid = true
+        @exclude_path = exclude_path
       end
 
       def present?
@@ -41,6 +42,10 @@ module TestBoosters
 
         content = JSON.parse(File.read(@path)).map do |raw_job|
           files = raw_job.fetch("files").sort
+
+          files.reject! do |f|
+            @exclude_path.any? { |word| f.include?(word) unless word.nil? || word.empty? }
+          end
 
           TestBoosters::Files::SplitConfiguration::Job.new(files)
         end
