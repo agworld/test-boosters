@@ -1,5 +1,5 @@
 [
-  { "files": ["spec/features/job_management/actions_one_spec.rb"] },
+  { "files": ["spec/features/job_management/actions_one_spec.rb", "spec/features/precision/prescriptions/prescription_filter_spec.rb"] },
   { "files": ["spec/features/job_management/actions_two_spec.rb", "spec/features/maps/paddock_inspector_spec.rb"] },
   { "files": ["spec/features/job_management/actions_three_spec.rb", "spec/features/job_management/job_orders/set_order_spec.rb"] },
   { "files": ["spec/features/job_management/activity_spec.rb", "spec/features/users/trial_offer_spec.rb"] },
@@ -8,7 +8,7 @@
   { "files": ["spec/features/job_management/filter_two_spec.rb", "spec/services/precision/layer_service_spec.rb"] },
   { "files": ["spec/features/job_management/filter_three_spec.rb", "spec/features/users/two_factor_auth_login_spec.rb"] },
   { "files": ["spec/features/job_management/maps_one_spec.rb"] },
-  { "files": ["spec/features/job_management/maps_two_spec.rb"] },
+  { "files": ["spec/features/job_management/maps_two_spec.rb", "spec/features/precision/prescriptions/prescription_bulk_actions_spec.rb"] },
   { "files": ["spec/features/job_management/my_business_spec.rb", "spec/features/job_management/performance_reporting_spec.rb", "spec/features/job_management/precision_apps_spec.rb"] },
   { "files": ["spec/features/job_management/change_due_dates_spec.rb", "spec/features/job_management/convert_job_spec.rb"] }
 ]
