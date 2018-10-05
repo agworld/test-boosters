@@ -47,12 +47,7 @@ module TestBoosters
         TestBoosters::Shell.execute("#{@command} --strict -f rerun --out rerun.txt #{files.join(' ')} || #{@command} --strict @rerun.txt")
       elsif @command.include?('rspec')
         exit_status = TestBoosters::Shell.execute("#{@command} #{files.join(" ")}")
-        # Run our retry
-        if rspec_rerun.empty?
-          exit_status
-        else
-          TestBoosters::Shell.execute("#{@command} #{rspec_rerun}") unless rspec_rerun.empty?
-        end
+        rspec_rerun.empty? ? exit_status : TestBoosters::Shell.execute("#{@command} #{rspec_rerun}")
       else
         TestBoosters::Shell.execute("#{@command} #{files.join(" ")}")
       end
