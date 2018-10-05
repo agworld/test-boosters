@@ -17,6 +17,7 @@ module TestBoosters
 
       def env_handler
         last_msg = `git log -1`
+        changed_files = `git diff HEAD~1 --name-only`
         regression_path = ENV['REGRESSION_PATH']
         source = ENV['SEMAPHORE_TRIGGER_SOURCE']
         current_branch = ENV['BRANCH_NAME']
@@ -31,7 +32,7 @@ module TestBoosters
         if source.eql?('manual')
           @exclude_path.delete(regression_path)
         end
-        if last_msg.include?('[regression]')
+        if last_msg.include?('[regression]') || changed_files.include?(regression_path)
           @exclude_path.delete(regression_path)
         end
         if last_msg.include?('[cukes off]')
