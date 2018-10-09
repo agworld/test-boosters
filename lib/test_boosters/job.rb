@@ -52,6 +52,7 @@ module TestBoosters
         else
           rerun_status = TestBoosters::Shell.execute("#{@command} #{rspec_rerun}")
           exit_status && rerun_status
+        end
       else
         TestBoosters::Shell.execute("#{@command} #{files.join(" ")}")
       end
