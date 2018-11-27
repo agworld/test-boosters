@@ -11,47 +11,6 @@ module TestBoosters
         @file_pattern = file_pattern
         @job_count = job_count
         @exclude_path = []
-
-        env_handler
-      end
-
-      def env_handler
-        last_msg = `git log -1`
-        changed_files = `git diff HEAD~1 --name-only`
-        regression_path = ENV['REGRESSION_PATH']
-        source = ENV['SEMAPHORE_TRIGGER_SOURCE']
-        current_branch = ENV['BRANCH_NAME']
-        exempt_branches =
-         if ENV['EXEMPT_BRANCHES'].nil?
-           []
-         else
-           ENV['EXEMPT_BRANCHES'].split(',')
-        end
-
-        @exclude_path << regression_path unless exempt_branches.include?(current_branch)
-        if source.eql?('manual')
-          @exclude_path.delete(regression_path)
-        end
-        if last_msg.include?('[regression]') || changed_files.include?(regression_path)
-          @exclude_path.delete(regression_path)
-        end
-        if last_msg.include?('[cukes off]')
-          @exclude_path << '.feature'
-        end
-        if last_msg.include?('[specs off]')
-          @exclude_path << '_spec.rb'
-        end
-        if last_msg.include?('[minitest off]')
-          @exclude_path << '_test.rb'
-        end
-        if last_msg.include?('[exunit off]')
-          @exclude_path << '_test.exs'
-        end
-        if last_msg.include?('[gotest off]')
-          @exclude_path << '_test.go'
-        end
-
-        @exclude_path
       end
 
       def display_info
