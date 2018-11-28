@@ -30,8 +30,7 @@ module TestBoosters
     end
 
     def rerun_files_exist?
-      return false unless File.exist?("tmp/capybara")
-      true
+      File.exist?("tmp/capybara/rspec_rerun.txt")
     end
 
     def run
@@ -39,6 +38,7 @@ module TestBoosters
 
       if files.empty?
         puts("No files to run in this job!")
+
         return 0
       end
 
@@ -54,8 +54,8 @@ module TestBoosters
         # Some scenarios were marked for re-run, so return the result of our second pass
         TestBoosters::Shell.execute("#{@command} #{rerun_files}")
 
+      # Running Go / minitest etc - no re-runs
       else
-        # Running Go / minitest etc
         TestBoosters::Shell.execute("#{@command} #{files.join(" ")}")
       end
     end
