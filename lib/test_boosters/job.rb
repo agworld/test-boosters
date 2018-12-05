@@ -33,6 +33,22 @@ module TestBoosters
       File.exist?("tmp/capybara/rspec_rerun.txt")
     end
 
+    def crystalball_glowing?
+      if File.exist?('crystalball_run')
+        ENV['CRYSTALBALL'] = true
+        return true
+      else
+        return false
+      end
+    end
+
+    def gather_code_coverage
+      TestBoosters::Shell.execute("bundle exec rspec #{files.join(" ")}")
+      # Coverage is in 'tmp/crystalball_data.yml'
+      # Need to upload it to an s3 bucket
+      # Return true if all went well, else false
+    end
+
     def run
       display_header
 
@@ -40,6 +56,11 @@ module TestBoosters
         puts("No files to run in this job!")
 
         return 0
+      end
+
+      # Check if we should run a crystalball coverage map
+      if crystalball_glowing? then
+        return gather_code_coverage
       end
 
       # Cucumber CL arguments handle the re-running
