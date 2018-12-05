@@ -45,6 +45,8 @@ module TestBoosters
     def gather_code_coverage
       TestBoosters::Shell.execute("bundle exec rspec #{files.join(" ")}")
       # Coverage is in 'tmp/crystalball_data.yml'
+      contents = File.read('tmp/crystalball_data.yml')
+      puts contents
       # Need to upload it to an s3 bucket
       # Return true if all went well, else false
     end
