@@ -35,7 +35,7 @@ module TestBoosters
 
     def crystalball_glowing?
       if File.exist?('crystalball_run')
-        ENV['CRYSTALBALL'] = true
+        ENV['CRYSTALBALL'] = 'true'
         return true
       else
         return false
