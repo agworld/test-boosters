@@ -34,21 +34,27 @@ module TestBoosters
     end
 
     def crystalball_glowing?
-      if File.exist?('crystalball_run')
-        ENV['CRYSTALBALL'] = 'true'
-        return true
-      else
-        return false
-      end
+      File.exist?('tmp/crystal_files.txt')
     end
 
-    def gather_code_coverage
-      TestBoosters::Shell.execute("bundle exec rspec #{files.join(" ")}")
-      # Coverage is in 'tmp/crystalball_data.yml'
-      contents = File.read('tmp/crystalball_data.yml')
-      puts contents
-      # Need to upload it to an s3 bucket
-      # Return true if all went well, else false
+    def split_crystal_files
+      all_specs = File.open('tmp/crystal_files.txt') { |f| f.read }.split(' ')
+      # These ENV vars are set by us in project settings, we can work out how many rspec threads there are
+      num_threads = ENV['FIRST_CUKE_JOB_ID'].to_i - ENV['FIRST_RSPEC_JOB_ID'].to_i
+      my_thread = ENV['SEMAPHORE_CURRENT_JOB'].to_i - ENV['FIRST_RSPEC_JOB_ID'].to_i
+
+      # Figure out how many scenarios to assign to each thread
+      # NOTE: we use one less than the number of threads we have, then assign any leftovers to the eighth thread
+      specs_per_thread = all_specs.length / (num_threads - 1)
+
+      # If i'm not the last thread
+      if my_thread < num_threads - 1
+        my_specs = all_specs[(my_thread * specs_per_thread)..((my_thread + 1) * specs_per_thread - 1)]
+      else
+        my_specs = all_specs[(my_thread * specs_per_thread)..-1]
+      end
+
+      my_specs
     end
 
     def run
@@ -60,9 +66,9 @@ module TestBoosters
         return 0
       end
 
-      # Check if we should run a crystalball coverage map
+      # Check if we're running crystalball, update our allocated files if so
       if crystalball_glowing? then
-        return gather_code_coverage
+        files = split_crystal_files
       end
 
       # Cucumber CL arguments handle the re-running
