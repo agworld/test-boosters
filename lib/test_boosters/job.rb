@@ -44,8 +44,12 @@ module TestBoosters
       my_thread = ENV['SEMAPHORE_CURRENT_JOB'].to_i - ENV['FIRST_RSPEC_JOB_ID'].to_i
 
       # Figure out how many scenarios to assign to each thread
-      # NOTE: we use one less than the number of threads we have, then assign any leftovers to the eighth thread
-      specs_per_thread = all_specs.length / (num_threads - 1)
+      specs_per_thread = all_specs.length / num_threads
+
+      # In the case there's more workers than problems, assign with a 1-to-1 ratio as many times as we can
+      if num_threads > all_specs.length
+        return (my_thread + 1) > all_specs.length ? [] : [all_specs[my_thread]]
+      end
 
       # If i'm not the last thread
       if my_thread < num_threads - 1
