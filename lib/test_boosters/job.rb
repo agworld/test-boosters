@@ -64,15 +64,15 @@ module TestBoosters
     def run
       display_header
 
+      # Check if we're running crystalball, update our allocated files if so
+      if @command.include?("rspec") && crystalball_glowing? then
+        files = split_crystal_files
+      end
+
       if files.empty?
         puts("No files to run in this job!")
 
         return 0
-      end
-
-      # Check if we're running crystalball, update our allocated files if so
-      if crystalball_glowing? then
-        files = split_crystal_files
       end
 
       # Cucumber CL arguments handle the re-running
