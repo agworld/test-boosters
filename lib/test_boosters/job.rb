@@ -63,13 +63,14 @@ module TestBoosters
 
     def run
       display_header
+      run_files = files
 
       # Check if we're running crystalball, update our allocated files if so
       if @command.include?("rspec") && crystalball_glowing? then
-        files = split_crystal_files
+        run_files = split_crystal_files
       end
 
-      if files.empty?
+      if run_files.nil? || run_files.empty?
         puts("No files to run in this job!")
 
         return 0
@@ -77,11 +78,11 @@ module TestBoosters
 
       # Cucumber CL arguments handle the re-running
       if @command.include?("cucumber")
-        TestBoosters::Shell.execute("#{@command} --strict -f rerun --out rerun.txt #{files.join(" ")} || #{@command} --strict @rerun.txt")
+        TestBoosters::Shell.execute("#{@command} --strict -f rerun --out rerun.txt #{run_files.join(" ")} || #{@command} --strict @rerun.txt")
 
       # Re-run rspec tests marked as failed
       elsif @command.include?("rspec")
-        exit_status = TestBoosters::Shell.execute("#{@command} #{files.join(" ")}")
+        exit_status = TestBoosters::Shell.execute("#{@command} #{run_files.join(" ")}")
         return exit_status unless rerun_files_exist?
 
         # Some scenarios were marked for re-run, so return the result of our second pass
@@ -89,7 +90,7 @@ module TestBoosters
 
       # Running Go / minitest etc - no re-runs
       else
-        TestBoosters::Shell.execute("#{@command} #{files.join(" ")}")
+        TestBoosters::Shell.execute("#{@command} #{run_files.join(" ")}")
       end
     end
   end
