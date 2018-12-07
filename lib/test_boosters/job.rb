@@ -66,7 +66,7 @@ module TestBoosters
       run_files = files
 
       # Check if we're running crystalball, update our allocated files if so
-      if @command.include?("rspec") && crystalball_glowing? then
+      if @command.include?("rspec") && crystalball_glowing? && !ENV['SEMAPHORE_CURRENT_JOB'].nil? then
         run_files = split_crystal_files
       end
 
