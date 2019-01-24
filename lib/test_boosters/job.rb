@@ -24,6 +24,15 @@ module TestBoosters
       @all_files ||= @known_files + @leftover_files
     end
 
+    def rerun_files
+      return "" unless rerun_files_exist?
+      File.open("tmp/capybara/rspec_rerun.txt", "r").read
+    end
+
+    def rerun_files_exist?
+      File.exist?("tmp/capybara/rspec_rerun.txt")
+    end
+
     def run
       display_header
 
@@ -33,8 +42,19 @@ module TestBoosters
         return 0
       end
 
-      if @command.include?('cucumber')
-        TestBoosters::Shell.execute("#{@command} --strict -f rerun --out rerun.txt #{files.join(' ')} || #{@command} --strict @rerun.txt")
+      # Cucumber CL arguments handle the re-running
+      if @command.include?("cucumber")
+        TestBoosters::Shell.execute("#{@command} --strict -f rerun --out rerun.txt #{files.join(" ")} || #{@command} --strict @rerun.txt")
+
+      # Re-run rspec tests marked as failed
+      elsif @command.include?("rspec")
+        exit_status = TestBoosters::Shell.execute("#{@command} #{files.join(" ")}")
+        return exit_status unless rerun_files_exist?
+
+        # Some scenarios were marked for re-run, so return the result of our second pass
+        TestBoosters::Shell.execute("#{@command} #{rerun_files}")
+
+      # Running Go / minitest etc - no re-runs
       else
         TestBoosters::Shell.execute("#{@command} #{files.join(" ")}")
       end
